@@ -120,7 +120,7 @@ function do_dump() {
       [ $? -ne 0 ] && return 1
     fi
     for onedb in $DB_NAMES; do
-      mysqldump -h $DB_SERVER -P $DB_PORT $DBUSER $DBPASS --databases ${onedb} $MYSQLDUMP_OPTS > $workdir/${onedb}_${now}.sql
+      mysqldump -h $DB_SERVER -P $DB_PORT $DBUSER $DBPASS --databases ${onedb} $MYSQLDUMP_OPTS | $COMPRESS >  $workdir/${onedb}_${now}.sql.${EXT2}
       [ $? -ne 0 ] && return 1
     done
   else
@@ -130,10 +130,10 @@ function do_dump() {
     else
       DB_LIST="-A"
     fi
-    mysqldump -h $DB_SERVER -P $DB_PORT $DBUSER $DBPASS $DB_LIST $MYSQLDUMP_OPTS > $workdir/backup_${now}.sql
+    mysqldump -h $DB_SERVER -P $DB_PORT $DBUSER $DBPASS $DB_LIST $MYSQLDUMP_OPTS | $COMPRESS > $workdir/backup_${now}.sql.${EXT2}
     [ $? -ne 0 ] && return 1
   fi
-  tar -C $workdir -cvf - . | $COMPRESS > ${TMPDIR}/${SOURCE}
+  tar -C $workdir -cvf - . > ${TMPDIR}/${SOURCE}
   [ $? -ne 0 ] && return 1
   rm -rf $workdir
   [ $? -ne 0 ] && return 1
